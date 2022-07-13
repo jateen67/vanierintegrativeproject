@@ -49,7 +49,8 @@ public class Waves extends Application {
     static ArrayList<Line> yIndiList = new ArrayList<>();
     static ArrayList<Text> xLabelList = new ArrayList<>();
     static ArrayList<Text> yLabelList = new ArrayList<>();
-
+    static Text ampTxt, periodTxt, omegaTxt, lambdaTxt, kTxt;
+    static CheckMenuItem modeNumberOne, modeNumberTwo, modeNumberThree, modeNumberFour, modeNumberFive, modeNumberSix;
     static int startPauseCounter, incidentCounter, reflectedCounter, standingCounter = 0;
     static double modeNumberOneValue, modeNumberTwoValue, modeNumberThreeValue, modeNumberFourValue, modeNumberFiveValue,
             modeNumberSixValue, A, f, T, v, omega, lambda, k, timeElapsed, timeWhenStopped, totalTimeWhenStopped;
@@ -105,12 +106,12 @@ public class Waves extends Application {
         raysVis.getItems().addAll(toggleIncident, toggleReflected, toggleStanding);
 
         Menu modeNumber = new Menu("Mode Shapes");
-        CheckMenuItem modeNumberOne = new CheckMenuItem("Mode Shape 1");
-        CheckMenuItem modeNumberTwo = new CheckMenuItem("Mode Shape 2");
-        CheckMenuItem modeNumberThree = new CheckMenuItem("Mode Shape 3");
-        CheckMenuItem modeNumberFour = new CheckMenuItem("Mode Shape 4");
-        CheckMenuItem modeNumberFive = new CheckMenuItem("Mode Shape 5");
-        CheckMenuItem modeNumberSix = new CheckMenuItem("Mode Shape 6");
+        modeNumberOne = new CheckMenuItem("Mode Shape 1");
+        modeNumberTwo = new CheckMenuItem("Mode Shape 2");
+        modeNumberThree = new CheckMenuItem("Mode Shape 3");
+        modeNumberFour = new CheckMenuItem("Mode Shape 4");
+        modeNumberFive = new CheckMenuItem("Mode Shape 5");
+        modeNumberSix = new CheckMenuItem("Mode Shape 6");
         modeNumber.getItems().addAll(modeNumberOne, modeNumberTwo, modeNumberThree, modeNumberFour, modeNumberFive,
                 modeNumberSix);
 
@@ -297,11 +298,11 @@ public class Waves extends Application {
 
         Text coordinateTxt = new Text("Point Coordinates (x, y) = (           ,         )");
         Text t = new Text("Resulting Standing Wave: ");
-        Text ampTxt = new Text("Amplitude = 0.00 cm");
-        Text periodTxt = new Text("Period = 0.00 s");
-        Text omegaTxt = new Text("Angular Frequency = 0.00 rad/s");
-        Text lambdaTxt = new Text("Wavelength = 0.00 cm");
-        Text kTxt = new Text("Wave Number = 0.00 rad/cm");
+        ampTxt = new Text("Amplitude = 0.00 cm");
+        periodTxt = new Text("Period = 0.00 s");
+        omegaTxt = new Text("Angular Frequency = 0.00 rad/s");
+        lambdaTxt = new Text("Wavelength = 0.00 cm");
+        kTxt = new Text("Wave Number = 0.00 rad/cm");
         t.setId("texts");
         ampTxt.setId("texts");
         coordinateTxt.setId("texts");
@@ -331,63 +332,10 @@ public class Waves extends Application {
                 f = freqSldr.getValue();
                 freqTf.setText(String.format("%.2f", freqSldr.getValue()) + " Hz");
                 if (startPauseCounter > 0 && playBtn.getText() == "Play") {
-                    for (Circle c : standList) {
-                        double sinTing = Math.sin(k * (c.getCenterX() - 30));
-                        double cosTing = Math.cos(omega * (totalTimeWhenStopped));
-                        double eq = 2 * A * sinTing * cosTing;
-                        c.setCenterY(192 + eq);
-                    }
-                    for (Circle c : travelList) {
-                        double sinTing = Math.sin((k * (c.getCenterX() - 30)) - (omega * (totalTimeWhenStopped)));
-                        double eq = A * sinTing;
-                        c.setCenterY(192 + eq);
-                    }
-                    for (Circle c : reTravelList) {
-                        double sinTing = Math.sin((k * (c.getCenterX() - 30)) + (omega * (totalTimeWhenStopped)));
-                        double eq = A * sinTing;
-                        c.setCenterY(192 + eq);
-                    }
+                    changeCircleFormulas();
                 }
-                T = 1 / f;
-                omega = 2 * Math.PI * f;
-                lambda = v / f;
-                k = (2 * Math.PI) / lambda;
-                ampTxt.setText("Amplitude = " + String.format("%.2f", 2 * A) + " cm");
-                periodTxt.setText("Period = " + String.format("%.2f", T) + " s");
-                omegaTxt.setText("Angular Frequency = " + String.format("%.2f", omega) + " rad/s");
-                lambdaTxt.setText("Wavelength = " + String.format("%.2f", lambda) + " cm");
-                kTxt.setText("Wave Number = " + String.format("%.2f", k) + " rad/cm");
-                if (Double.isInfinite(T)) {
-                    periodTxt.setText("Period = 0.00 s");
-                }
-                if (Double.isInfinite(omega)) {
-                    omegaTxt.setText("Angular Frequency = 0.00 rad/s");
-                }
-                if (Double.isInfinite(lambda)) {
-                    lambdaTxt.setText("Wavelength = 0.00 cm");
-                }
-                if (Double.isInfinite(k)) {
-                    kTxt.setText("Wave Number = 0.00 rad/cm");
-                }
-                if (Double.isNaN(T)) {
-                    periodTxt.setText("Period = 0.00 s");
-                }
-                if (Double.isNaN(omega)) {
-                    omegaTxt.setText("Angular Frequency = 0.00 rad/s");
-                }
-                if (Double.isNaN(lambda)) {
-                    lambdaTxt.setText("Wavelength = 0.00 cm");
-                }
-                if (Double.isNaN(k)) {
-                    kTxt.setText("Wave Number = 0.00 rad/cm");
-                }
-
-                modeNumberOne.setSelected(false);
-                modeNumberTwo.setSelected(false);
-                modeNumberThree.setSelected(false);
-                modeNumberFour.setSelected(false);
-                modeNumberFive.setSelected(false);
-                modeNumberSix.setSelected(false);
+                validateValues();
+                disableModes();
             }
         });
         freqVBox.getChildren().addAll(freqText,freqTf, freqSldr);
@@ -411,62 +359,10 @@ public class Waves extends Application {
                 v = wavSpdSldr.getValue();
                 wavSpdTf.setText(String.format("%.2f", wavSpdSldr.getValue()) + " cm/s");
                 if (startPauseCounter > 0 && playBtn.getText() == "Play") {
-                    for (Circle c : standList) {
-                        double sinTing = Math.sin(k * (c.getCenterX() - 30));
-                        double cosTing = Math.cos(omega * (totalTimeWhenStopped));
-                        double eq = 2 * A * sinTing * cosTing;
-                        c.setCenterY(192 + eq);
-                    }
-                    for (Circle c : travelList) {
-                        double sinTing = Math.sin((k * (c.getCenterX() - 30)) - (omega * (totalTimeWhenStopped)));
-                        double eq = A * sinTing;
-                        c.setCenterY(192 + eq);
-                    }
-                    for (Circle c : reTravelList) {
-                        double sinTing = Math.sin((k * (c.getCenterX() - 30)) + (omega * (totalTimeWhenStopped)));
-                        double eq = A * sinTing;
-                        c.setCenterY(192 + eq);
-                    }
+                    changeCircleFormulas();
                 }
-                T = 1 / f;
-                omega = 2 * Math.PI * f;
-                lambda = v / f;
-                k = (2 * Math.PI) / lambda;
-                ampTxt.setText("Amplitude = " + String.format("%.2f", 2 * A) + " cm");
-                periodTxt.setText("Period = " + String.format("%.2f", T) + " s");
-                omegaTxt.setText("Angular Frequency = " + String.format("%.2f", omega) + " rad/s");
-                lambdaTxt.setText("Wavelength = " + String.format("%.2f", lambda) + " cm");
-                kTxt.setText("Wave Number = " + String.format("%.2f", k) + " rad/cm");
-                if (Double.isInfinite(T)) {
-                    periodTxt.setText("Period = 0.00 s");
-                }
-                if (Double.isInfinite(omega)) {
-                    omegaTxt.setText("Angular Frequency = 0.00 rad/s");
-                }
-                if (Double.isInfinite(lambda)) {
-                    lambdaTxt.setText("Wavelength = 0.00 cm");
-                }
-                if (Double.isInfinite(k)) {
-                    kTxt.setText("Wave Number = 0.00 rad/cm");
-                }
-                if (Double.isNaN(T)) {
-                    periodTxt.setText("Period = 0.00 s");
-                }
-                if (Double.isNaN(omega)) {
-                    omegaTxt.setText("Angular Frequency = 0.00 rad/s");
-                }
-                if (Double.isNaN(lambda)) {
-                    lambdaTxt.setText("Wavelength = 0.00 cm");
-                }
-                if (Double.isNaN(k)) {
-                    kTxt.setText("Wave Number = 0.00 rad/cm");
-                }
-                modeNumberOne.setSelected(false);
-                modeNumberTwo.setSelected(false);
-                modeNumberThree.setSelected(false);
-                modeNumberFour.setSelected(false);
-                modeNumberFive.setSelected(false);
-                modeNumberSix.setSelected(false);
+                validateValues();
+                disableModes();
             }
         });
         wavSpdVBox.getChildren().addAll(wavSpdText,wavSpdTf,wavSpdSldr);
@@ -490,56 +386,9 @@ public class Waves extends Application {
                 A = ampSldr.getValue();
                 ampTf.setText(String.format("%.2f", ampSldr.getValue()) + " cm");
                 if (startPauseCounter > 0 && playBtn.getText() == "Play") {
-                    for (Circle c : standList) {
-                        double sinTing = Math.sin(k * (c.getCenterX() - 30));
-                        double cosTing = Math.cos(omega * (totalTimeWhenStopped));
-                        double eq = 2 * A * sinTing * cosTing;
-                        c.setCenterY(192 + eq);
-                    }
-                    for (Circle c : travelList) {
-                        double sinTing = Math.sin((k * (c.getCenterX() - 30)) - (omega * (totalTimeWhenStopped)));
-                        double eq = A * sinTing;
-                        c.setCenterY(192 + eq);
-                    }
-                    for (Circle c : reTravelList) {
-                        double sinTing = Math.sin((k * (c.getCenterX() - 30)) + (omega * (totalTimeWhenStopped)));
-                        double eq = A * sinTing;
-                        c.setCenterY(192 + eq);
-                    }
+                    changeCircleFormulas();
                 }
-                T = 1 / f;
-                omega = 2 * Math.PI * f;
-                lambda = v / f;
-                k = (2 * Math.PI) / lambda;
-                ampTxt.setText("Amplitude = " + String.format("%.2f", 2 * A) + " cm");
-                periodTxt.setText("Period = " + String.format("%.2f", T) + " s");
-                omegaTxt.setText("Angular Frequency = " + String.format("%.2f", omega) + " rad/s");
-                lambdaTxt.setText("Wavelength = " + String.format("%.2f", lambda) + " cm");
-                kTxt.setText("Wave Number = " + String.format("%.2f", k) + " rad/cm");
-                if (Double.isInfinite(T)) {
-                    periodTxt.setText("Period = 0.00 s");
-                }
-                if (Double.isInfinite(omega)) {
-                    omegaTxt.setText("Angular Frequency = 0.00 rad/s");
-                }
-                if (Double.isInfinite(lambda)) {
-                    lambdaTxt.setText("Wavelength = 0.00 cm");
-                }
-                if (Double.isInfinite(k)) {
-                    kTxt.setText("Wave Number = 0.00 rad/cm");
-                }
-                if (Double.isNaN(T)) {
-                    periodTxt.setText("Period = 0.00 s");
-                }
-                if (Double.isNaN(omega)) {
-                    omegaTxt.setText("Angular Frequency = 0.00 rad/s");
-                }
-                if (Double.isNaN(lambda)) {
-                    lambdaTxt.setText("Wavelength = 0.00 cm");
-                }
-                if (Double.isNaN(k)) {
-                    kTxt.setText("Wave Number = 0.00 rad/cm");
-                }
+                validateValues();
             }
         });
 
@@ -988,40 +837,7 @@ public class Waves extends Application {
         AnimationTimer animateTimer = new AnimationTimer() {
             @Override
             public void handle(long l) {
-                T = 1 / f;
-                omega = 2 * Math.PI * f;
-                lambda = v / f;
-                k = (2 * Math.PI) / lambda;
-
-
-                periodTxt.setText("Period = " + String.format("%.2f", T) + " s");
-                omegaTxt.setText("Angular Frequency = " + String.format("%.2f", omega) + " rad/s");
-                lambdaTxt.setText("Wavelength = " + String.format("%.2f", lambda) + " cm");
-                kTxt.setText("Wave Number = " + String.format("%.2f", k) + " rad/cm");
-                if (Double.isInfinite(T)) {
-                    periodTxt.setText("Period = 0.00 s");
-                }
-                if (Double.isInfinite(omega)) {
-                    omegaTxt.setText("Angular Frequency = 0.00 rad/s");
-                }
-                if (Double.isInfinite(lambda)) {
-                    lambdaTxt.setText("Wavelength = 0.00 cm");
-                }
-                if (Double.isInfinite(k)) {
-                    kTxt.setText("Wave Number = 0.00 rad/cm");
-                }
-                if (Double.isNaN(T)) {
-                    periodTxt.setText("Period = 0.00 s");
-                }
-                if (Double.isNaN(omega)) {
-                    omegaTxt.setText("Angular Frequency = 0.00 rad/s");
-                }
-                if (Double.isNaN(lambda)) {
-                    lambdaTxt.setText("Wavelength = 0.00 cm");
-                }
-                if (Double.isNaN(k)) {
-                    kTxt.setText("Wave Number = 0.00 rad/cm");
-                }
+                validateValues();
                 if(normalMotion.isSelected()) {
                     timeElapsed = timer.elapsed();
                 }
@@ -1038,14 +854,12 @@ public class Waves extends Application {
                     c.setCenterY(192 + eq);
                 }
                 for(Circle c : travelList) {
-                    double sinTing = Math.sin((k * (c.getCenterX() - 30)) - (omega * (timeElapsed
-                            + totalTimeWhenStopped)));
+                    double sinTing = Math.sin((k * (c.getCenterX() - 30)) - (omega * (timeElapsed + totalTimeWhenStopped)));
                     double eq = A * sinTing;
                     c.setCenterY(192 + eq);
                 }
                 for(Circle c : reTravelList) {
-                    double sinTing = Math.sin((k * (c.getCenterX() - 30)) + (omega * (timeElapsed
-                            + totalTimeWhenStopped)));
+                    double sinTing = Math.sin((k * (c.getCenterX() - 30)) + (omega * (timeElapsed + totalTimeWhenStopped)));
                     double eq = A * sinTing;
                     c.setCenterY(192 + eq);
                 }
@@ -1152,5 +966,69 @@ public class Waves extends Application {
                 coordinateTxt.setLayoutX(350);
             });
         }
+    }
+
+    private void changeCircleFormulas() {
+        for (Circle c : standList) {
+            double sinTing = Math.sin(k * (c.getCenterX() - 30));
+            double cosTing = Math.cos(omega * (totalTimeWhenStopped));
+            double eq = 2 * A * sinTing * cosTing;
+            c.setCenterY(192 + eq);
+        }
+        for (Circle c : travelList) {
+            double sinTing = Math.sin((k * (c.getCenterX() - 30)) - (omega * (totalTimeWhenStopped)));
+            double eq = A * sinTing;
+            c.setCenterY(192 + eq);
+        }
+        for (Circle c : reTravelList) {
+            double sinTing = Math.sin((k * (c.getCenterX() - 30)) + (omega * (totalTimeWhenStopped)));
+            double eq = A * sinTing;
+            c.setCenterY(192 + eq);
+        }
+    }
+
+    private void validateValues() {
+        T = 1 / f;
+        omega = 2 * Math.PI * f;
+        lambda = v / f;
+        k = (2 * Math.PI) / lambda;
+        ampTxt.setText("Amplitude = " + String.format("%.2f", 2 * A) + " cm");
+        periodTxt.setText("Period = " + String.format("%.2f", T) + " s");
+        omegaTxt.setText("Angular Frequency = " + String.format("%.2f", omega) + " rad/s");
+        lambdaTxt.setText("Wavelength = " + String.format("%.2f", lambda) + " cm");
+        kTxt.setText("Wave Number = " + String.format("%.2f", k) + " rad/cm");
+        if (Double.isInfinite(T)) {
+            periodTxt.setText("Period = 0.00 s");
+        }
+        if (Double.isInfinite(omega)) {
+            omegaTxt.setText("Angular Frequency = 0.00 rad/s");
+        }
+        if (Double.isInfinite(lambda)) {
+            lambdaTxt.setText("Wavelength = 0.00 cm");
+        }
+        if (Double.isInfinite(k)) {
+            kTxt.setText("Wave Number = 0.00 rad/cm");
+        }
+        if (Double.isNaN(T)) {
+            periodTxt.setText("Period = 0.00 s");
+        }
+        if (Double.isNaN(omega)) {
+            omegaTxt.setText("Angular Frequency = 0.00 rad/s");
+        }
+        if (Double.isNaN(lambda)) {
+            lambdaTxt.setText("Wavelength = 0.00 cm");
+        }
+        if (Double.isNaN(k)) {
+            kTxt.setText("Wave Number = 0.00 rad/cm");
+        }
+    }
+
+    private void disableModes() {
+        modeNumberOne.setSelected(false);
+        modeNumberTwo.setSelected(false);
+        modeNumberThree.setSelected(false);
+        modeNumberFour.setSelected(false);
+        modeNumberFive.setSelected(false);
+        modeNumberSix.setSelected(false);
     }
 }
