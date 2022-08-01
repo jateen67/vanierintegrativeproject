@@ -17,7 +17,7 @@ A grade of **100%** was achieved on this project.
 #### Newton's 2nd law simulator
 ![newton](https://user-images.githubusercontent.com/106696411/181864350-9199989d-fab8-470e-99b9-d8df47324afd.gif)
 
-#### Standing waves simulator
+#### Standing wave simulator
 ![wave](https://user-images.githubusercontent.com/106696411/181864363-5cf83c29-6752-4c07-88ba-c76c59b8ee39.gif)
 
 #### Note: In order to run this program you must first download the [JavaFX library](https://gluonhq.com/products/javafx/) and the [json-simple JAR file](https://code.google.com/archive/p/json-simple/downloads)
