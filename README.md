@@ -4,11 +4,11 @@ This capstone project integrates physics concepts to create a learning tool comp
 
 This project was done using **Java**, **JavaFX**, and **CSS**. 
 
-A grade of **100%** was achieved on this project.
+A grade of **100%** was achieved on this project while a grade of **99%** was achieved as the final class grade.
 
 ## My responsiblities for this project included:
 - Designing the overall layout of the application and all windows displayed to the user
-- Implementing all mathematical formulae and concepts into the 2 simulations
+- Implementing mathematical formulae and concepts into the 2 simulations
 - Leading a team of 4 to create 2 whole physics simulations
 - Helping teammates debug their code and aiding them when getting stuck
 
