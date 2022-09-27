@@ -7,9 +7,9 @@ This project was done using **Java**, **JavaFX**, and **CSS**.
 A grade of **100%** was achieved on this project.
 
 ## My responsiblities for this project included:
+- Leading a team of 4 to create 2 whole physics simulations
 - Designing the overall layout of the application and all windows displayed to the user
 - Implementing mathematical formulae and concepts into the 2 simulations
-- Leading a team of 4 to create 2 whole physics simulations
 - Helping teammates debug their code and aiding them when getting stuck
 
 ## Sample pictures
