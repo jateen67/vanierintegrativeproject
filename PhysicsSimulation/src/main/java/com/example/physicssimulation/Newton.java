@@ -45,6 +45,8 @@ public class Newton extends Application {
     static ArrayList<Text> impDistanceIndicatorArrayList = new ArrayList<>();
     static String mainStageIcon, helpStageIcon, menuPic, homePic, helpPic, dusk, dayCar, day,motorbike,skateboard, nMenuPic;
     static int counter = 0;
+    static CheckMenuItem metric, imperial;
+    static Label velocityDisplayLabel, accelerationDisplayLabel, timeDisplayLabel, distanceDisplayLabel;
     static Font font = Font.font("Verdana", FontWeight.NORMAL, FontPosture.REGULAR, 14);
 
     public Newton(Stage newtonStage) {
@@ -103,11 +105,10 @@ public class Newton extends Application {
         separator.setStartY(350);
         separator.setStroke(Color.WHITE);
 
-
         Menu settings = new Menu("Settings");
         Menu metricSystem = new Menu("Metric System");
-        CheckMenuItem imperial = new CheckMenuItem("Imperial");
-        CheckMenuItem metric = new CheckMenuItem("Metric");
+        imperial = new CheckMenuItem("Imperial");
+        metric = new CheckMenuItem("Metric");
         metric.setSelected(true);
         metricSystem.getItems().addAll(metric, imperial);
         Menu objects = new Menu("Objects");
@@ -171,11 +172,11 @@ public class Newton extends Application {
         tfVbox.getChildren().addAll(appliedForceHBox,massHBox,frictionForceHBox);
         HBox velocityHbox = new HBox();
         velocityHbox.setPadding(new Insets(0, 20, 0, 0));
-        Label velocityDisplayLabel = new Label("Velocity: 0000.00km/h");
+        velocityDisplayLabel = new Label("Velocity: 0000.00km/h");
         velocityDisplayLabel.setTextFill(Color.RED);
         velocityHbox.getChildren().add(velocityDisplayLabel);
 
-        Label accelerationDisplayLabel = new Label("Acceleration: 000.00m/s²");
+        accelerationDisplayLabel = new Label("Acceleration: 000.00m/s²");
         accelerationDisplayLabel.setTextFill(Color.ORANGE);
         HBox accelerationHbox = new HBox();
         accelerationHbox.setPadding(new Insets(0, 2, 0, 0));
@@ -183,14 +184,14 @@ public class Newton extends Application {
 
         HBox timeHbox = new HBox();
         timeHbox.setPadding(new Insets(0, 88, 0, 0));
-        Label timeDisplayLabel = new Label("Time: 00.00s");
+        timeDisplayLabel = new Label("Time: 00.00s");
         Color color = Color.web("#9784ed");
         timeDisplayLabel.setTextFill(color);
         timeHbox.getChildren().add(timeDisplayLabel);
 
         HBox distanceHbox = new HBox();
         distanceHbox.setPadding(new Insets(0, 40, 0, 0));
-        Label distanceDisplayLabel = new Label("Distance: 0000.00m");
+        distanceDisplayLabel = new Label("Distance: 0000.00m");
         Color omori = Color.web("#6c0ffe");
         distanceDisplayLabel.setTextFill(omori);
         distanceHbox.getChildren().add(distanceDisplayLabel);
@@ -317,6 +318,7 @@ public class Newton extends Application {
 
                         speed = acceleration * (accTime + accTotalTimeWhenStopped);
                         distance = 0.5 * speed * (accTime + accTotalTimeWhenStopped);
+
                         if (metric.isSelected()) {
                             accelerationDisplayLabel.setText("Acceleration: " + String.format("%.2f", acceleration) + "m/s²");
                         }
@@ -335,13 +337,16 @@ public class Newton extends Application {
                         arrowHead.setLayoutX(450);
                         arrowTail.setX(480);
                         arrowForceLabel.setText(frictionForceTextField.getText() + "N");
+
                         oppSpeed = deceleration * (decTime + decTotalTimeWhenStopped);
+
                         if (metric.isSelected()) {
                             accelerationDisplayLabel.setText("Acceleration: " + String.format("%.2f", deceleration) + "m/s²");
                         }
                         if (imperial.isSelected()) {
                             accelerationDisplayLabel.setText("Acceleration: " + String.format("%.2f", deceleration * 3.28084) + "ft/s²");
                         }
+
                         distancePerFrame = (speed * (decTime + decTotalTimeWhenStopped)) + (0.5 * deceleration * Math.pow((decTime + decTotalTimeWhenStopped), 2));
                         groundView.setTranslateX(-distancePerFrame);
 
@@ -363,74 +368,8 @@ public class Newton extends Application {
                         decTime += 1/60d;
                     }
                     totalTime += 1/60d;
-                    if (metric.isSelected()) {
-                        if(((speed + oppSpeed) * 3.6)<10){
-                            velocityDisplayLabel.setText("Velocity: 000" + String.format("%.2f", ((speed + oppSpeed) * 3.6)) + "km/h");
-                        }
-                        else if(((speed + oppSpeed) * 3.6)<100){
-                            velocityDisplayLabel.setText("Velocity: 00" + String.format("%.2f", ((speed + oppSpeed) * 3.6)) + "km/h");
-                        }
-                        else if(((speed + oppSpeed) * 3.6)<1000){
-                            velocityDisplayLabel.setText("Velocity: 0" + String.format("%.2f", ((speed + oppSpeed) * 3.6)) + "km/h");
-                        }else{
-                            velocityDisplayLabel.setText("Velocity: " + String.format("%.2f", ((speed + oppSpeed) * 3.6)) + "km/h");
-                        }
+                    updateScreenValues();
 
-                        if(totalTime + totalTimeWhenStopped <10){
-                            timeDisplayLabel.setText("Time: 0" + String.format("%.2f", totalTime + totalTimeWhenStopped) + "s");
-                        }
-                        else if (totalTime + totalTimeWhenStopped > 10){
-                            timeDisplayLabel.setText("Time: " + String.format("%.2f", totalTime + totalTimeWhenStopped) + "s");
-                        }
-
-
-                        if(distance + distancePerFrame <10){
-                            distanceDisplayLabel.setText("Distance: 000" + String.format("%.2f", distance + distancePerFrame) + "m");
-                        }
-                        else if (distance+distancePerFrame <100) {
-                            distanceDisplayLabel.setText("Distance: 00" + String.format("%.2f", distance + distancePerFrame) + "m");
-                        }
-                        else if (distance + distancePerFrame <1000){
-                            distanceDisplayLabel.setText("Distance: 0" + String.format("%.2f", distance + distancePerFrame) + "m");
-                        } else {
-                            distanceDisplayLabel.setText("Distance: " + String.format("%.2f", distance + distancePerFrame) + "m");
-                        }
-                    }
-
-                    if (imperial.isSelected()){
-                        if(((speed + oppSpeed) * 3.6 *0.621371)<10){
-                            velocityDisplayLabel.setText("Velocity: 000" + String.format("%.2f", ((speed + oppSpeed) * 3.6 *0.621371)) + "mi/h");
-                        }
-                        else if(((speed + oppSpeed) * 3.6 *0.621371)<100){
-                            velocityDisplayLabel.setText("Velocity: 00" + String.format("%.2f", ((speed + oppSpeed) * 3.6 *0.621371)) + "mi/h");
-                        }
-                        else if(((speed + oppSpeed) * 3.6 *0.621371)<1000){
-                            velocityDisplayLabel.setText("Velocity: 0" + String.format("%.2f", ((speed + oppSpeed) * 3.6 *0.621371)) + "mi/h");
-                        }else{
-                            velocityDisplayLabel.setText("Velocity: " + String.format("%.2f", ((speed + oppSpeed) * 3.6 *0.621371)) + "mi/h");
-                        }
-
-
-                        if(totalTime + totalTimeWhenStopped <10){
-                            timeDisplayLabel.setText("Time: 0" + String.format("%.2f", totalTime + totalTimeWhenStopped) + "s");
-                        }
-                        else if (totalTime + totalTimeWhenStopped > 10){
-                            timeDisplayLabel.setText("Time: " + String.format("%.2f", totalTime + totalTimeWhenStopped) + "s");
-                        }
-
-                        if((distance + distancePerFrame)* 1.09361 <10){
-                            distanceDisplayLabel.setText("Distance: 000" + String.format("%.2f", (distance + distancePerFrame)* 1.09361) + "yd");
-                        }
-                        else if ((distance + distancePerFrame)* 1.09361 <100) {
-                            distanceDisplayLabel.setText("Distance: 00" + String.format("%.2f", (distance + distancePerFrame)* 1.09361) + "yd");
-                        }
-                        else if ((distance + distancePerFrame)* 1.09361 <1000){
-                            System.out.println(distance + distancePerFrame);
-                            distanceDisplayLabel.setText("Distance: 0" + String.format("%.2f", (distance + distancePerFrame)* 1.09361) + "yd");
-                        } else {
-                            distanceDisplayLabel.setText("Distance: " + String.format("%.2f", (distance + distancePerFrame)* 1.09361) + "yd");
-                        }
-                    }
                     if ((speed + oppSpeed) < 0) {
                         timer.stop();
                         if (imperial.isSelected()) {
@@ -440,7 +379,6 @@ public class Newton extends Application {
                         if (metric.isSelected()) {
                             velocityDisplayLabel.setText("Velocity: 0000.00km/h");
                             accelerationDisplayLabel.setText("Acceleration: 000.00m/s²");
-
                         }
                         resetBtn.setDisable(false);
                         arrowForceLabel.setText("0N");
@@ -460,29 +398,30 @@ public class Newton extends Application {
                 for (Line l : distanceLineArrayList) {
                     l.setTranslateX(0);
                 }
-
                 for (Text t : distanceIndicatorArrayList) {
                     t.setTranslateX(0);
                 }
                 for (Line l : impDistanceLineArrayList) {
                     l.setTranslateX(0);
                 }
-
                 for (Text t : impDistanceIndicatorArrayList) {
                     t.setTranslateX(0);
                 }
             }
         };
+
         forceTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 forceTextField.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
+
         massTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 massTextField.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
+
         frictionForceTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 frictionForceTextField.setText(newValue.replaceAll("[^\\d]", ""));
@@ -497,62 +436,63 @@ public class Newton extends Application {
                 forceTextField.setStyle("-fx-background-color: red");
                 warning.setText("Input fields cannot be empty");
                 warning.setVisible(true);
-                if(!(massInput.trim().isEmpty())){
-                    if(darkMode.isSelected()){
+                if (!(massInput.trim().isEmpty())){
+                    if (darkMode.isSelected()){
                         massTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
-
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         massTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                     }
                 }
-                if(!(frictionForceInput.trim().isEmpty())){
-                    if(darkMode.isSelected()){
+                if (!(frictionForceInput.trim().isEmpty())){
+                    if (darkMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
-
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                     }
                 }
-
             }
             if (massInput.trim().isEmpty()){
                 massTextField.setStyle("-fx-background-color: red");
                 warning.setText("Input fields cannot be empty");
                 warning.setVisible(true);
-                if(!(forceInput.trim().isEmpty())){
-                    if(darkMode.isSelected()){
+                if (!(forceInput.trim().isEmpty())){
+                    if (darkMode.isSelected()){
                         forceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
 
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         forceTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                     }
                 }
-                if(!(frictionForceInput.trim().isEmpty())){
-                    if(darkMode.isSelected()){
+                if (!(frictionForceInput.trim().isEmpty())){
+                    if (darkMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
 
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                     }
                 }
             }
-            if(frictionForceInput.trim().isEmpty()){
+            if (frictionForceInput.trim().isEmpty()){
                 frictionForceTextField.setStyle("-fx-background-color: red");
                 warning.setText("Input fields cannot be empty");
                 warning.setVisible(true);
-                if(!(massInput.trim().isEmpty())){
-                    if(darkMode.isSelected()){
+                if (!(massInput.trim().isEmpty())){
+                    if (darkMode.isSelected()){
                         massTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
-
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         massTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                     }
                 }
-                if(!(forceInput.trim().isEmpty())){
-                    if(darkMode.isSelected()){
+                if (!(forceInput.trim().isEmpty())){
+                    if (darkMode.isSelected()){
                         forceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
 
-                    }if (lightMode.isSelected()){
+                    } if (lightMode.isSelected()){
                         forceTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                     }
                 }
@@ -561,13 +501,15 @@ public class Newton extends Application {
                 boolean a = ((Double.parseDouble(forceInput) < 100) || (Double.parseDouble(forceInput) > 1000));
                 boolean b = ((Double.parseDouble(massInput) < 1) || (Double.parseDouble(massInput) > 10));
                 boolean c = ((Double.parseDouble(frictionForceInput) < 100) || (Double.parseDouble(frictionForceInput) > 1000));
+
                 if (a && b && c) {
-                    if(darkMode.isSelected()){
+                    if (darkMode.isSelected()){
                         forceTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
                         massTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
                         frictionForceTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
 
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         forceTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
                         massTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
                         frictionForceTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
@@ -576,12 +518,13 @@ public class Newton extends Application {
                     warning.setVisible(true);
                 }
                 else if (a && b) {
-                    if(darkMode.isSelected()){
+                    if (darkMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
                         forceTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
                         massTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
 
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                         forceTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
                         massTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
@@ -590,12 +533,13 @@ public class Newton extends Application {
                     warning.setVisible(true);
                 }
                 else if (a && c) {
-                    if(darkMode.isSelected()){
+                    if (darkMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
                         forceTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
                         massTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
 
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
                         forceTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
                         massTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
@@ -604,12 +548,13 @@ public class Newton extends Application {
                     warning.setVisible(true);
                 }
                 else if (b && c) {
-                    if(darkMode.isSelected()){
+                    if (darkMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
                         forceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
                         massTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
 
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
                         forceTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                         massTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
@@ -618,12 +563,13 @@ public class Newton extends Application {
                     warning.setVisible(true);
                 }
                 else if (a) {
-                    if(darkMode.isSelected()){
+                    if (darkMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
                         forceTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
                         massTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
 
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                         forceTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
                         massTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
@@ -632,12 +578,13 @@ public class Newton extends Application {
                     warning.setVisible(true);
                 }
                 else if (b) {
-                    if(darkMode.isSelected()){
+                    if (darkMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
                         forceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
                         massTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
 
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                         forceTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                         massTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
@@ -646,12 +593,13 @@ public class Newton extends Application {
                     warning.setVisible(true);
                 }
                 else if (c) {
-                    if(darkMode.isSelected()){
+                    if (darkMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: red; -fx-text-fill: white");
                         forceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
                         massTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
 
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()){
                         frictionForceTextField.setStyle("-fx-background-color: red; -fx-text-fill: black");
                         forceTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
                         massTextField.setStyle("-fx-background-color: white; -fx-text-fill: black");
@@ -661,11 +609,12 @@ public class Newton extends Application {
                 }
                 else {
                     counter++;
-                    if(darkMode.isSelected()) {
+                    if (darkMode.isSelected()) {
                         forceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
                         massTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
                         frictionForceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
-                    }if (lightMode.isSelected()){
+                    }
+                    if (lightMode.isSelected()) {
                         forceTextField.setStyle("-fx-background-color: White; -fx-text-fill: black");
                         massTextField.setStyle("-fx-background-color: White; -fx-text-fill: black");
                         frictionForceTextField.setStyle("-fx-background-color: White; -fx-text-fill: black");
@@ -703,11 +652,13 @@ public class Newton extends Application {
         resetBtn.setOnAction(actionEvent -> {
             startBtn.setText("Play");
             warning.setVisible(false);
-            if(darkMode.isSelected()) {
+
+            if (darkMode.isSelected()) {
                 forceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
                 massTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
                 frictionForceTextField.setStyle("-fx-background-color: #303030; -fx-text-fill: white");
-            }if (lightMode.isSelected()){
+            }
+            if (lightMode.isSelected()){
                 forceTextField.setStyle("-fx-background-color: White; -fx-text-fill: black");
                 massTextField.setStyle("-fx-background-color: White; -fx-text-fill: black");
                 frictionForceTextField.setStyle("-fx-background-color: White; -fx-text-fill: black");
@@ -767,7 +718,6 @@ public class Newton extends Application {
             for (Line l : distanceLineArrayList) {
                 l.setVisible(false);
             }
-
             for (Text t : distanceIndicatorArrayList) {
                 t.setVisible(false);
             }
@@ -793,14 +743,12 @@ public class Newton extends Application {
             for (Line l : distanceLineArrayList) {
                 l.setVisible(true);
             }
-
             for (Text t : distanceIndicatorArrayList) {
                 t.setVisible(true);
             }
             for (Line l : impDistanceLineArrayList) {
                 l.setVisible(false);
             }
-
             for (Text t : impDistanceIndicatorArrayList) {
                 t.setVisible(false);
             }
@@ -822,6 +770,7 @@ public class Newton extends Application {
             title.setFill(Color.BLACK);
             darkMode.setSelected(false);
         });
+
         darkMode.setOnAction(actionEvent -> {
             root.setStyle("-fx-background-color: #121212");
             menuBtn.setStyle("-fx-background-color: #121212;-fx-border-color: white;");
@@ -837,7 +786,9 @@ public class Newton extends Application {
             title.setFill(Color.WHITE);
             lightMode.setSelected(false);
         });
+
         exitProgram.setOnAction(actionEvent -> exit());
+
         godObject.setOnAction(actionEvent -> {
             objectView.setX(70);
             objectView.setY(0);
@@ -845,6 +796,7 @@ public class Newton extends Application {
             carObject.setSelected(false);
             skateboardObject.setSelected(false);
         });
+
         carObject.setOnAction(actionEvent -> {
             objectView.setY(10);
             objectView.setX(50);
@@ -852,6 +804,7 @@ public class Newton extends Application {
             skateboardObject.setSelected(false);
             godObject.setSelected(false);
         });
+
         skateboardObject.setOnAction(actionEvent -> {
             objectView.setX(120);
             objectView.setImage(skateboardImg);
@@ -859,6 +812,7 @@ public class Newton extends Application {
             godObject.setSelected(false);
             objectView.setY(15);
         });
+
         ScrollPane helpPane = new ScrollPane();
         helpPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         helpPane.setPadding(new Insets(10));
@@ -879,7 +833,7 @@ public class Newton extends Application {
         theoryTxt.setFont(font);
 
         ImageView wavesEg = new ImageView(new Image(helpPic));
-        wavesEg.setFitHeight(265 * (49/31));
+        wavesEg.setFitHeight(265 * (49 / 31));
 
         Text theoryTxt2 = new Text("""
                                 
@@ -989,5 +943,77 @@ public class Newton extends Application {
             arrowHead.setVisible(false);
             arrowForceLabel.setVisible(false);
         });
+    }
+
+    private void updateScreenValues() {
+        if (metric.isSelected()) {
+            if (((speed + oppSpeed) * 3.6) < 10){
+                velocityDisplayLabel.setText("Velocity: 000" + String.format("%.2f", ((speed + oppSpeed) * 3.6)) + "km/h");
+            }
+            else if (((speed + oppSpeed) * 3.6) < 100){
+                velocityDisplayLabel.setText("Velocity: 00" + String.format("%.2f", ((speed + oppSpeed) * 3.6)) + "km/h");
+            }
+            else if (((speed + oppSpeed) * 3.6) < 1000){
+                velocityDisplayLabel.setText("Velocity: 0" + String.format("%.2f", ((speed + oppSpeed) * 3.6)) + "km/h");
+            }
+            else {
+                velocityDisplayLabel.setText("Velocity: " + String.format("%.2f", ((speed + oppSpeed) * 3.6)) + "km/h");
+            }
+
+            if (totalTime + totalTimeWhenStopped < 10){
+                timeDisplayLabel.setText("Time: 0" + String.format("%.2f", totalTime + totalTimeWhenStopped) + "s");
+            }
+            else if (totalTime + totalTimeWhenStopped > 10){
+                timeDisplayLabel.setText("Time: " + String.format("%.2f", totalTime + totalTimeWhenStopped) + "s");
+            }
+
+            if (distance + distancePerFrame < 10){
+                distanceDisplayLabel.setText("Distance: 000" + String.format("%.2f", distance + distancePerFrame) + "m");
+            }
+            else if (distance + distancePerFrame < 100) {
+                distanceDisplayLabel.setText("Distance: 00" + String.format("%.2f", distance + distancePerFrame) + "m");
+            }
+            else if (distance + distancePerFrame < 1000){
+                distanceDisplayLabel.setText("Distance: 0" + String.format("%.2f", distance + distancePerFrame) + "m");
+            }
+            else {
+                distanceDisplayLabel.setText("Distance: " + String.format("%.2f", distance + distancePerFrame) + "m");
+            }
+        }
+
+        if (imperial.isSelected()) {
+            if (((speed + oppSpeed) * 3.6 * 0.621371) < 10){
+                velocityDisplayLabel.setText("Velocity: 000" + String.format("%.2f", ((speed + oppSpeed) * 3.6 *0.621371)) + "mi/h");
+            }
+            else if (((speed + oppSpeed) * 3.6 * 0.621371) < 100){
+                velocityDisplayLabel.setText("Velocity: 00" + String.format("%.2f", ((speed + oppSpeed) * 3.6 *0.621371)) + "mi/h");
+            }
+            else if (((speed + oppSpeed) * 3.6 * 0.621371) < 1000){
+                velocityDisplayLabel.setText("Velocity: 0" + String.format("%.2f", ((speed + oppSpeed) * 3.6 *0.621371)) + "mi/h");
+            }
+            else {
+                velocityDisplayLabel.setText("Velocity: " + String.format("%.2f", ((speed + oppSpeed) * 3.6 *0.621371)) + "mi/h");
+            }
+
+            if (totalTime + totalTimeWhenStopped < 10){
+                timeDisplayLabel.setText("Time: 0" + String.format("%.2f", totalTime + totalTimeWhenStopped) + "s");
+            }
+            else if (totalTime + totalTimeWhenStopped > 10){
+                timeDisplayLabel.setText("Time: " + String.format("%.2f", totalTime + totalTimeWhenStopped) + "s");
+            }
+
+            if ((distance + distancePerFrame) * 1.09361 < 10){
+                distanceDisplayLabel.setText("Distance: 000" + String.format("%.2f", (distance + distancePerFrame)* 1.09361) + "yd");
+            }
+            else if ((distance + distancePerFrame) * 1.09361 < 100) {
+                distanceDisplayLabel.setText("Distance: 00" + String.format("%.2f", (distance + distancePerFrame)* 1.09361) + "yd");
+            }
+            else if ((distance + distancePerFrame) * 1.09361 < 1000){
+                distanceDisplayLabel.setText("Distance: 0" + String.format("%.2f", (distance + distancePerFrame)* 1.09361) + "yd");
+            }
+            else {
+                distanceDisplayLabel.setText("Distance: " + String.format("%.2f", (distance + distancePerFrame)* 1.09361) + "yd");
+            }
+        }
     }
 }
