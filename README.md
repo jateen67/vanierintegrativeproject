@@ -20,4 +20,4 @@ A grade of **100%** was achieved on this project.
 #### Standing wave simulator
 ![wave](https://user-images.githubusercontent.com/106696411/181864363-5cf83c29-6752-4c07-88ba-c76c59b8ee39.gif)
 
-#### Note: In order to run this program you must first download the [JavaFX library](https://gluonhq.com/products/javafx/) and the [json-simple JAR file](https://code.google.com/archive/p/json-simple/downloads)
+**Note:** In order to run this program you must first download the [JavaFX library](https://gluonhq.com/products/javafx/) and the [json-simple](https://code.google.com/archive/p/json-simple/downloads) JAR file
